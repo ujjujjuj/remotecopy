@@ -45,11 +45,11 @@ jobs:
 
       - name: Build server binary
         run: |
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o remotecopy-server-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/server/main.go
+          CGO_ENABLED=1 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o remotecopy-server-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/server/main.go
 
       - name: Build client binary
         run: |
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o remotecopy-client-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/client/main.go
+          CGO_ENABLED=1 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o remotecopy-client-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/client/main.go
 
       - name: Upload Release Assets
         uses: actions/upload-artifact@v3
