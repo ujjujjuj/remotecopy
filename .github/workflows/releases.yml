@@ -22,25 +22,38 @@ jobs:
           sudo apt-get install -y libpng++-dev
           sudo apt-get install -y xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libxkbcommon-dev
 
-      - name: Build
+      - name: Build Client
         uses: crazy-max/ghaction-xgo@v3
         with:
-          xgo_version: latest
           go_version: 1.23
-          dest: build
-          prefix: remotecopy
+          dest: bin
+          pkg: cmd/client
+          prefix: remotecopy-client
           targets: windows/amd64,linux/amd64,linux/arm64,darwin/arm64
           v: true
-          x: false
+          x: true
           ldflags: -s -w
           trimpath: true
 
-      - name: List build directory contents
-        run: ls -R build
+      - name: Build Server
+        uses: crazy-max/ghaction-xgo@v3
+        with:
+          go_version: 1.23
+          dest: bin
+          pkg: cmd/server
+          prefix: remotecopy-serer
+          targets: windows/amd64,linux/amd64,linux/arm64,darwin/arm64
+          v: true
+          x: true
+          ldflags: -s -w
+          trimpath: true
+
+      - name: List bin directory contents
+        run: ls -R ./bin
 
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
-          file: build/remotecopy-*
+          file: ./build/remotecopy-*
           file_glob: true
