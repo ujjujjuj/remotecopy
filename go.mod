@@ -1,6 +1,6 @@
 module github.com/ujjujjuj/remotecopy
 
-go 1.22.5
+go 1.23
 
 require (
 	github.com/atotto/clipboard v0.1.4
