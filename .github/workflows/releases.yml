@@ -10,6 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        cc:
+          - gcc
+          - o64-clang
+          - x86_64-w64-mingw32-gcc
+        cxx:
+          - g++
+          - o64-clang++
+          - x86_64-w64-mingw32-g++
         goos:
           - linux
           - windows
@@ -19,10 +27,16 @@ jobs:
         include:
           - goos: linux
             goarch: amd64
-          - goos: windows
-            goarch: amd64
+            cc: gcc
+            cxx: g++
           - goos: darwin
             goarch: amd64
+            cc: o64-clang
+            cxx: o64-clang++
+          - goos: windows
+            goarch: amd64
+            cc: x86_64-w64-mingw32-gcc
+            cxx: x86_64-w64-mingw32-g++
 
     steps:
       - name: Checkout code
@@ -35,21 +49,21 @@ jobs:
 
       - name: Install GCC and libraries
         run: |
-          sudo apt update
-          sudo apt install -y gcc libc6-dev
-          sudo apt install -y libx11-dev xorg-dev libxtst-dev
-          sudo apt install -y xsel xclip
-          sudo apt install -y libpng++-dev
-          sudo apt install -y xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libxkbcommon-dev
+          sudo apt-get update
+          sudo apt-get install -y gcc libc6-dev
+          sudo apt-get install -y libx11-dev xorg-dev libxtst-dev
+          sudo apt-get install -y xsel xclip
+          sudo apt-get install -y libpng++-dev
+          sudo apt-get install -y xcb libxcb-xkb-dev x11-xkb-utils libx11-xcb-dev libxkbcommon-x11-dev libxkbcommon-dev
 
 
       - name: Build server binary
         run: |
-          CGO_CFLAGS="-Wno-unused-command-line-argument" CGO_ENABLED=1 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o remotecopy-server-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/server/main.go
+          CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} CGO_ENABLED=1 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o remotecopy-server-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/server/main.go
 
       - name: Build client binary
         run: |
-          CGO_CFLAGS="-Wno-unused-command-line-argument" CGO_ENABLED=1 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o remotecopy-client-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/client/main.go
+          CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} CGO_ENABLED=1 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o remotecopy-client-${{ matrix.goos }}-${{ matrix.goarch }} ./cmd/client/main.go
 
       - name: Upload Release Assets
         uses: actions/upload-artifact@v3
