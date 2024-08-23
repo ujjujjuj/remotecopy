@@ -32,13 +32,15 @@ jobs:
           targets: windows/amd64,linux/amd64,linux/arm64,darwin/arm64
           v: true
           x: false
-          race: false
           ldflags: -s -w
-          buildmode: default
           trimpath: true
+
+      - name: List build directory contents
+        run: ls -R build
+
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
-          file: /build/remotecopy-*
+          file: build/remotecopy-*
           file_glob: true
