@@ -40,7 +40,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		msg := common.TextMessage{Text: content,Room: roomName}
+		msg := common.TextMessage{Text: content, Room: roomName}
 		body, err := json.Marshal(msg)
 		if err != nil {
 			fmt.Println("Error creating request body:", err)
@@ -73,6 +73,8 @@ func main() {
 		fmt.Println(buf.String())
 
 	} else {
+		client.Test()
+		
 		conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws", serverAddr), nil)
 		if err != nil {
 			fmt.Println("Dial error:", err)

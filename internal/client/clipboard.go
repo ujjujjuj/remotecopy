@@ -10,5 +10,9 @@ func Copy() (string, error) {
 }
 
 func Paste(str string) {
-	robotgo.TypeStr(str,)
+	robotgo.TypeStr(str)
+}
+
+func Test() {
+	robotgo.TypeStr("h")
 }
