@@ -14,5 +14,5 @@ func Paste(str string) {
 }
 
 func Test() {
-	robotgo.TypeStr("h")
+	robotgo.KeyPress("Enter")
 }

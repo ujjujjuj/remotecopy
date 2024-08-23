@@ -74,32 +74,38 @@ func main() {
 
 	} else {
 		client.Test()
-		
-		conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws", serverAddr), nil)
-		if err != nil {
-			fmt.Println("Dial error:", err)
-			os.Exit(1)
-		}
-		defer conn.Close()
-
-		serverClient := common.Client{Conn: conn, Role: role, Room: roomName}
-
-		err = serverClient.SendHello()
-		if err != nil {
-			fmt.Println("Hello error:", err)
-			os.Exit(1)
-		}
 
 		for {
-			text, err := serverClient.ReceiveText()
+
+			conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s/ws", serverAddr), nil)
 			if err != nil {
-				fmt.Println("Receive error: ", err)
+				fmt.Println("Dial error:", err)
+				break
+			}
+			defer conn.Close()
+
+			serverClient := common.Client{Conn: conn, Role: role, Room: roomName}
+
+			err = serverClient.SendHello()
+			if err != nil {
+				fmt.Println("Hello error:", err)
 				break
 			}
 
-			fmt.Println("Received:", text.Text)
+			for {
+				text, err := serverClient.ReceiveText()
+				if err != nil {
+					fmt.Println("Receive error: ", err)
+					break
+				}
+
+				fmt.Println("Received:", text.Text)
+				time.Sleep(time.Second * 5) // TODO remove
+				client.Paste(text.Text)
+			}
+			
+			fmt.Println("Disconnected from server, retrying after 5 seconds....")
 			time.Sleep(time.Second * 5)
-			client.Paste(text.Text)
 		}
 	}
 
